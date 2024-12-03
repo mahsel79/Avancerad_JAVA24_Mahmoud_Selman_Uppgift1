@@ -3,6 +3,7 @@ package com.carrental.ui;
 import com.carrental.models.Vehicle;
 import com.carrental.services.RentalService;
 
+import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -24,7 +25,8 @@ public class UserInterface {
             switch (choice) {
                 case 1 -> displayAvailableVehicles();
                 case 2 -> rentVehicle();
-                case 3 -> {
+                case 3 -> returnRentedCar();
+                case 4 -> {
                     System.out.println("Thank you for using the service!");
                     return;
                 }
@@ -37,14 +39,21 @@ public class UserInterface {
         System.out.println("\nMain Menu:");
         System.out.println("1. View Available Vehicles");
         System.out.println("2. Rent a Vehicle");
-        System.out.println("3. Exit");
+        System.out.println("3. Return a Vehicle");
+        System.out.println("4. Exit");
         System.out.print("Please select an option: ");
     }
 
     private void displayAvailableVehicles() {
         System.out.println("\nAvailable Vehicles:");
+        List<Vehicle> availableVehicles = rentalService.getAvailableVehicles();
+        if (availableVehicles.isEmpty()) {
+            System.out.println("No vehicles are currently available.");
+            return;
+        }
+
         int index = 1;
-        for (Vehicle vehicle : rentalService.getAvailableVehicles()) {
+        for (Vehicle vehicle : availableVehicles) {
             System.out.printf("%d. %s (%s) - %,.2f SEK/day%n",
                     index++,
                     vehicle.getModel(),
@@ -85,11 +94,43 @@ public class UserInterface {
         if (confirmation.equalsIgnoreCase("yes")) {
             String carNumber = generateRandomCarNumber();
             selectedVehicle.setRegistrationNumber(carNumber);
-            rentalService.getAvailableVehicles().remove(selectedVehicle);
+            rentalService.rentVehicle(selectedVehicle);
 
             System.out.printf("Thank you! Please pick up your vehicle. Your car number is %s.%n", carNumber);
         } else {
             System.out.println("Rental cancelled. Returning to main menu.");
+        }
+    }
+
+    private void returnRentedCar() {
+        if (!rentalService.hasRentedVehicles()) {
+            System.out.println("You have no rented vehicles to return.");
+            return;
+        }
+
+        System.out.println("\nYour rented vehicles:");
+        List<Vehicle> rentedVehicles = rentalService.getRentedVehicles();
+        for (int i = 0; i < rentedVehicles.size(); i++) {
+            Vehicle vehicle = rentedVehicles.get(i);
+            System.out.printf("%d. %s (%s) - %s%n",
+                    i + 1,
+                    vehicle.getModel(),
+                    vehicle.getVehicleType(),
+                    vehicle.getRegistrationNumber());
+        }
+
+        System.out.print("Enter the number of the vehicle to return: ");
+        int choice = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+
+        if (choice > 0 && choice <= rentedVehicles.size()) {
+            Vehicle vehicleToReturn = rentedVehicles.get(choice - 1);
+            rentalService.returnVehicle(vehicleToReturn);
+            System.out.printf("Thank you for returning the %s (%s).%n",
+                    vehicleToReturn.getModel(),
+                    vehicleToReturn.getVehicleType());
+        } else {
+            System.out.println("Invalid choice. Returning to the main menu.");
         }
     }
 
