@@ -1,7 +1,3 @@
-Here’s the updated **README** with the "Return a Rented Vehicle" feature and related updates:  
-
----
-
 # Virtual Car Rental Service  
 
 This project is a **Java-based Virtual Car Rental Service**, designed to simulate the process of renting and returning vehicles. Users can view available cars, rent a vehicle by selecting its type, receive a unique car number upon confirming the rental, and return rented vehicles.  
