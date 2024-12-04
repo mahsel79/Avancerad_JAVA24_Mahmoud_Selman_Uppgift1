@@ -26,22 +26,7 @@ public class RentalService {
         return availableVehicles;
     }
 
-    // Filter available vehicles by type
-    public List<Vehicle> getAvailableVehiclesByType(String vehicleType) {
-        return availableVehicles.stream()
-                .filter(vehicle -> vehicle.getVehicleType().equalsIgnoreCase(vehicleType))
-                .collect(Collectors.toList());
-    }
 
-    // Find a vehicle by its registration number
-    public Vehicle findVehicleByRegistration(String registrationNumber) {
-        for (Vehicle vehicle : availableVehicles) {
-            if (vehicle.getRegistrationNumber().equalsIgnoreCase(registrationNumber)) {
-                return vehicle;
-            }
-        }
-        return null;
-    }
 
     // Rent a vehicle
     public void rentVehicle(Vehicle vehicle) {
